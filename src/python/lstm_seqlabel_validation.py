@@ -86,7 +86,7 @@ def validate_predictions_transducer(
     ''' Validate the predictions made by the transducer.
     '''
     correct = 0.0
-    print 'Writing predictions to ', (args.folder + fn)
+    print('Writing predictions to ', (args.folder + fn))
     with codecs.open(args.folder + fn, mode="w", encoding="utf8") as f:
         f.write('input prediction goldOutput\n')
         for (x, y) in zip(test_lex, groundtruth_valid):
@@ -94,7 +94,7 @@ def validate_predictions_transducer(
             prediction = ''.join([idx2label[e] for e in f_classify(x)])
             assert x.shape[1] % 2 == 1
             mid_column = (x.shape[1] - 1) / 2
-            x = ''.join([idx2label[e] for e in x[:, mid_column]])
+            x = ''.join([idx2label[e] for e in x[:, int(mid_column)]])
             f.write('%s %s %s\n' % (x, prediction, y))
             correct += (prediction == y)
     return 100 * float(correct) / len(groundtruth_valid)
@@ -183,8 +183,8 @@ def validate_predictions_pdp(valid_lex, _1, args, f_classify, valid_y, _4, _5):
             pass
         else:
             util_lstm_seqlabel.print_domination(arc_scores)
-            print ' VALIDATION: parents', [e[0] for e in viterbi_parse]
-            print ' TRUE: parents', [e[0] for e in true_parse]
+            print(' VALIDATION: parents', [e[0] for e in viterbi_parse])
+            print(' TRUE: parents', [e[0] for e in true_parse])
         results.append(evaluate_predicted_parse(viterbi_parse, true_parse))
     correct_arcs = sum(e[0] for e in results)
     total_arcs = sum(e[1] for e in results)

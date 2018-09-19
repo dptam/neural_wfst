@@ -10,7 +10,7 @@
 import lstm_seqlabel_load_save_model
 import subprocess
 import rasengan
-import cPickle as pickle
+import pickle
 
 def validate_validation_result(validation_result):
     for k in validation_result:
@@ -45,9 +45,9 @@ def update_saved_parameters(training_stats, test_stack_config, args):
             lstm_seqlabel_load_save_model.save_parameters_to_file(
                 test_stack_config, args.saveto)
         except pickle.PicklingError as e:
-            print "Suffering from Pickling Error in saving \n%s \nto %s"%(
+            print("Suffering from Pickling Error in saving \n%s \nto %s"%(
                 ' '.join(test_stack_config.keys()),
-                args.saveto)
+                args.saveto))
 
     return
 
@@ -57,11 +57,11 @@ def update_saved_predictions(training_stats, args):
         for data in ['train', 'valid']:
             source = args.folder + '/current.%s.txt'%data
             destination = (args.saveto.replace('.parameters.pickle', '') + '.%s.predictions'%data)
-            print "Moving prediction file from", source, 'to', destination
+            print("Moving prediction file from", source, 'to', destination)
             try:
                 subprocess.call(['mv', source, destination])
             except:
-                print 'Failed to move the file !'
+                print('Failed to move the file !')
 
     return
 
@@ -87,18 +87,18 @@ def update_learning_rate(training_stats, args):
     #       validation error stays same. lr too high, bug-in-code
     try:
         if loss[-1] > loss[-2] and loss[-2] > loss[-3]:
-            print "LOSS INCREASED SUCCESSIVELY !! DECREASE LR"
+            print("LOSS INCREASED SUCCESSIVELY !! DECREASE LR")
             args.lr = float(args.lr) * args.lr_drop
         if (train_accuracy[-1] > train_accuracy[-2]
             and train_accuracy[-2] > train_accuracy[-3]
             and val_accuracy[-1] < val_accuracy[-2]
             and val_accuracy[-2] < val_accuracy[-3]):
-            print "TRAIN ACC UP BUT VAL ACC DOWN SUCCESSIVELY!!"
+            print("TRAIN ACC UP BUT VAL ACC DOWN SUCCESSIVELY!!")
         if (loss[-1] < loss[-2]
             and loss[-2] < loss[-3] # Loss decreased
             and train_accuracy[-1] < train_accuracy[-2] # Train acc decreased.
             and train_accuracy[-2] < train_accuracy[-3]):
-            print "TRAIN LOSS DOWN BUT TRAIN ACC ALSO DOWN SUCCESSIVELY !!"
+            print("TRAIN LOSS DOWN BUT TRAIN ACC ALSO DOWN SUCCESSIVELY !!")
     except:
         pass
     if args.decay:
@@ -106,7 +106,7 @@ def update_learning_rate(training_stats, args):
                                       - training_stats['best_epoch_id'])
         if epochs_without_improvement > args.decay_epochs:
             training_stats['clr'] *= 0.5
-    print 'Learning rate is now', training_stats['clr']
+    print('Learning rate is now', training_stats['clr'])
     return
 
 
@@ -117,5 +117,5 @@ def update_global_db_of_test_results(test_stats, train_stats, args):
                         str(train_stats['validation_f1']),
                         'tf1=' + str(test_stats['f1']),
                         '\n'])
-    print 'Updated global results db', global_db, 'with ', results
+    print('Updated global results db', global_db, 'with ', results)
     open(global_db, 'a').write(results)

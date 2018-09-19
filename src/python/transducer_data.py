@@ -13,6 +13,7 @@ import string
 import rasengan
 import util_lstm_seqlabel
 import warnings
+import functools
 
 BOS_CHAR = '^'
 def read_data(file_name):
@@ -52,10 +53,10 @@ def int2str(lst, Sigma_inv):
     return _string
 
 def get_lst_char(data_tuple_list):
-    lst_char = list(set(reduce(
+    lst_char = list(set(functools.reduce(
             lambda x, y: x + y[0] + y[1], data_tuple_list, '')))
-    for e in list(set(string.letters.lower())):
-        e = unicode(e)
+    for e in list(set(string.ascii_letters.lower())):
+        e = str(e)
         if e not in lst_char:
             lst_char.append(e)
     assert BOS_CHAR not in lst_char
@@ -97,16 +98,16 @@ def main(args):
             data_list = add_bos(data_list)
             val_data_list = add_bos(val_data_list)
             test_data_list = add_bos(test_data_list)
-            warnings.warn('''
-            NOTE: While preparing sigma, we add 1 to the index
-            returned by enumerate because the transducer unit that
-            Ryan wrote uses index 0 as the index for the epsilon
-            symbol. So essentially the epsilon symbol and the
-            integer 0 are reserved symbols that cannot appear in the
-            vocabulary.
+            # warnings.warn('''
+            # NOTE: While preparing sigma, we add 1 to the index
+            # returned by enumerate because the transducer unit that
+            # Ryan wrote uses index 0 as the index for the epsilon
+            # symbol. So essentially the epsilon symbol and the
+            # integer 0 are reserved symbols that cannot appear in the
+            # vocabulary.
 
-            ALSO, we need to add 1 to the vocsize because of that.
-            ''')
+            # ALSO, we need to add 1 to the vocsize because of that.
+            # ''')
             # sigma :: char -> int
             sigma = dict((b, a+1) for (a,b) in enumerate(lst_char))
 

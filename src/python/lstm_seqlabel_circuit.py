@@ -1222,9 +1222,9 @@ def metaStackMaker(stack, stack_config):
     #---------------------------------------------------------------#
     # Build the Circuit Now from the Stack of Chips that was input. #
     #---------------------------------------------------------------#
-    print '\n', 'Building Stack now'
-    print 'Start: in_dim:', stack_config['in_dim'], \
-        'batch_input:', stack_config['batch_input']
+    print('\n', 'Building Stack now')
+    print('Start: in_dim:', stack_config['in_dim'], \
+        'batch_input:', stack_config['batch_input'])
     start_tv_f = (T.itensor3
                   if stack_config['batch_input']
                   else T.imatrix)
@@ -1237,9 +1237,9 @@ def metaStackMaker(stack, stack_config):
     for e in stack:
         current_class_chip = e[0](
             e[1], stack_config).prepend(current_class_chip)
-        print e[1], "In_dim:", current_class_chip.in_dim, \
+        print(e[1], "In_dim:", current_class_chip.in_dim, \
             "Out_dim:", current_class_chip.out_dim, \
-            "Output ndim:", current_class_chip.output_tv.ndim
+            "Output ndim:", current_class_chip.output_tv.ndim)
         for e in current_class_chip.needed_key():
             print (e, stack_config[e])
     #----------------------------#

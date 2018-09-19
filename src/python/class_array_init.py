@@ -36,7 +36,7 @@ def read_matrix_from_file(fn, dic, desired_dimension):
     for word, idx in dic.iteritems():
         if word in data:
             M[idx, :dim_r] = data[word][:dim_r]
-    print 'loaded embeddings from %s' % fn
+    print('loaded embeddings from %s' % fn)
     return M
 
 

@@ -36,7 +36,7 @@ def get_cautious_update_f(updates, lr, x, y, cost):
     -------
     A function for updating the variables.
     '''
-    print 'Using Cautious Updates'
+    print('Using Cautious Updates')
     params = [e[0] for e in updates]
     updates = [e[1] for e in updates]
     staging_area = [theano.shared(e.get_value()) for e in params]
@@ -101,7 +101,7 @@ def compile_update_fn(x, y, lr, cost, updates,
             assert str2.ndim == 1
             intermediate_tensor = f_intermediate(str1).astype('float64')
             return stack_config['endpoint'].func(
-                str1[1:, cols/2], str2, intermediate_tensor)
+                str1[1:, int(cols/2)], str2, intermediate_tensor)
 
         f_grad_intermediate = theano.function(
             inputs=flatten([x, cost]),
@@ -116,7 +116,7 @@ def compile_update_fn(x, y, lr, cost, updates,
             intermediate_tensor = f_intermediate(str1).astype('float64')
             intermediate_grad = numpy.array(
                 stack_config['endpoint'].grad(
-                    str1[1:, cols/2], str2, intermediate_tensor),
+                    str1[1:, int(cols/2)], str2, intermediate_tensor),
                 dtype='float32')
             return f_grad_intermediate(str1, intermediate_grad)
         pass
@@ -158,7 +158,7 @@ def compile_update_fn(x, y, lr, cost, updates,
                     'float64')
                 intermediate_grad = numpy.array(
                     stack_config['endpoint'].grad(
-                        str1[1:, cols/2], str2, intermediate_tensor),
+                        str1[1:, int(cols/2)], str2, intermediate_tensor),
                     dtype='float32')
                 f_update_intermediate(lr, str1, intermediate_grad)
                 return (intermediate_tensor, intermediate_grad)
@@ -178,7 +178,7 @@ def compile_update_fn(x, y, lr, cost, updates,
             cols = (in_str.shape[1]-1)
             assert cols % 2 == 0
             return stack_config['endpoint'].decode(
-                in_str[1:, cols/2], f_intermediate(in_str).astype('float64'))
+                in_str[1:, int(cols/2)], f_intermediate(in_str).astype('float64'))
     nsf = Namespace()
     nsf.f_cost = f_cost
     nsf.f_update = f_update
@@ -200,14 +200,14 @@ def clip_gradients(stack_config, grad_param):
     params       :
     '''
     threshold = stack_config['clipping_value']
-    print 'clip_gradients threshold', threshold
+    print('clip_gradients threshold', threshold)
     if threshold > 0:
         gradients_to_clip = []
         gradients_not_to_clip = []
         for (g, p) in grad_param:
             if (hasattr(p, 'clip_gradient') and p.clip_gradient):
                 gradients_to_clip.append((g, p))
-                print p.name, 'gradient is being clipped in optimizer.clip_gradients'
+                print(p.name, 'gradient is being clipped in optimizer.clip_gradients')
             else:
                 gradients_not_to_clip.append((g, p))
 
@@ -244,7 +244,7 @@ def project_parameters_l2(stack_config, unprojected_param_update):
     unprojected_param_update :
     '''
     threshold = stack_config['projection_threshold']
-    print 'parameter projection threshold', threshold
+    print('parameter projection threshold', threshold)
     if threshold > 0:
         projected_param_update = []
         for p, u in unprojected_param_update:
@@ -267,7 +267,7 @@ def project_parameters_l2(stack_config, unprojected_param_update):
                 # the norm of the row to equal to the threshold.
                 multipliers = theano.tensor.minimum(
                     weight_vector_norms, ones_per_weight_vector)
-                tmp = range(u.ndim - 1)
+                tmp = list(range(u.ndim - 1))
                 tmp.insert(p.l2_projection_axis, 'x')
                 u_ = multipliers.dimshuffle(tmp) * u
                 u_.wrt_name = u.wrt_name

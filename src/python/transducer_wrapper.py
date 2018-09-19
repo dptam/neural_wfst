@@ -40,8 +40,8 @@ class TransducerWrapper(object):
             return self._transducer.decode(*args)
 
     def __getattr__(self, k):
-        return self.__dict__[k]
-
+        return self.__dict__.get(k, 'None')
+        
     def __setattr__(self, k, v):
         self.__dict__[k] = v
 

@@ -18,14 +18,14 @@ try:
     from dependency_parser.RectangleDependencyParser_cython \
         import dp_insideOutside, dp_find_LogZ
 except ImportError:
-    print 'Could not import dependency parser. Dont try to use it.'
+    print('Could not import dependency parser. Dont try to use it.')
 import re
 import rasengan
 import contextlib
 try:
     from scipy.optimize import fmin_l_bfgs_b as lbfgs
 except ImportError:
-    print 'Couldnt import scipy.optimize.fmin_l_bfgs_b'
+    print('Couldnt import scipy.optimize.fmin_l_bfgs_b')
 import scipy.optimize
 
 def train_transducer_lbfgs(
@@ -44,7 +44,7 @@ def train_transducer_lbfgs(
 
     ts_param_name = [
         str(e) for e in ttns.train_stack_config.updatable_parameters()]
-    print 'The following params will be trained by lbfgs', ts_param_name
+    print('The following params will be trained by lbfgs', ts_param_name)
     ts_param_shape_list = [ttns.train_stack_config[name].get_value().shape
                            for name in ts_param_name]
     ts_param_shape_map = dict(zip(ts_param_name, ts_param_shape_list))
@@ -153,8 +153,8 @@ def train_transducer(train_lex, train_y, args, ttns, training_stats, batch_size=
         pass
     training_stats['epoch_cost'].append(epoch_cost)
     print
-    print '>> Epoch completed in %.2f (sec) <<' % (time.time() - tic)
-    print '>> Epoch Cost, ', epoch_cost, '<<'
+    print('>> Epoch completed in %.2f (sec) <<' % (time.time() - tic))
+    print('>> Epoch Cost, ', epoch_cost, '<<')
     return
 
 def train_seq(train_lex, train_y, args, ttns, training_stats):
@@ -219,7 +219,7 @@ def train_seq(train_lex, train_y, args, ttns, training_stats):
                             util_lstm_seqlabel.duplicate_label(labels))
                     else:
                         sys_exc_info = sys.exc_info()
-                        raise sys_exc_info[0], sys_exc_info[1], sys_exc_info[2]
+                        raise(sys_exc_info[0], sys_exc_info[1], sys_exc_info[2])
 
             tokens_done += expected_len * len(idx_batch)
             percentage_complete = float(tokens_done) / total_tokens * 100
@@ -231,8 +231,8 @@ def train_seq(train_lex, train_y, args, ttns, training_stats):
         pass
     training_stats['epoch_cost'].append(epoch_cost)
     print
-    print '>> Epoch completed in %.2f (sec) <<' % (time.time() - tic)
-    print '>> Epoch Cost, ', epoch_cost, '<<'
+    print('>> Epoch completed in %.2f (sec) <<' % (time.time() - tic))
+    print('>> Epoch Cost, ', epoch_cost, '<<')
     return
 
 
@@ -299,9 +299,9 @@ def train_pdp(train_lex, train_y, args, f_cost, f_update, f_classify, epoch_id,
         time_nll_grad += (time.time() - tic_tmp)
         if util_lstm_seqlabel.is_invalid(nll_grad_wrt_arc_score):
             number_of_sentences_skipped += 1
-            print "Skipped idx: ", i, "Consecutively Skipped: ", number_of_sentences_skipped
+            print("Skipped idx: ", i, "Consecutively Skipped: ", number_of_sentences_skipped)
             if number_of_sentences_skipped >= 100:
-                print "Skipped 100 sentences, no point training any further"
+                print("Skipped 100 sentences, no point training any further")
                 break
             continue
         else:
@@ -317,16 +317,16 @@ def train_pdp(train_lex, train_y, args, f_cost, f_update, f_classify, epoch_id,
             pass
         else:
             arc_scores_after_update = numpy.expand_dims(f_classify(words), 2)
-            print 'Delta Log Prob of Gold Parse (Should be +ve) : ', find_lp(arc_scores_after_update, arcs) - LogProbofGoldParseBefore, 'sentence_len: ', sentence_len
+            print('Delta Log Prob of Gold Parse (Should be +ve) : ', find_lp(arc_scores_after_update, arcs) - LogProbofGoldParseBefore, 'sentence_len: ', sentence_len)
             if sentence_len == 6:
                 # , arc_scores_after_update.squeeze()
-                print arc_scores.squeeze(), nll_grad_wrt_arc_score.squeeze()
+                print(arc_scores.squeeze(), nll_grad_wrt_arc_score.squeeze())
         if args.verbose >= 3:
-            print '[learning] epoch %i >> %2.2f%%' % (epoch_id, (i + 1) * 100. / args.nsentences),
-            print 'completed in %.2f (sec) <<\r' % (time.time() - tic),
+            print('[learning] epoch %i >> %2.2f%%' % (epoch_id, (i + 1) * 100. / args.nsentences),)
+            print('completed in %.2f (sec) <<\r' % (time.time() - tic),)
             sys.stdout.flush()
     total_time = time.time() - tic
-    print '\n', 'Time training 1 epoch with %d sentence' % len(train_lex), total_time, [e / total_time for e in [time_arc_scores, time_nll_grad, time_updates]], '\n'
+    print('\n', 'Time training 1 epoch with %d sentence' % len(train_lex), total_time, [e / total_time for e in [time_arc_scores, time_nll_grad, time_updates]], '\n')
     return
 
 
@@ -347,8 +347,8 @@ def setup_training_environment(args, ttns, training_stats):
     train_test_map = dict(zip(train_stack_param_names, test_stack_param_names))
     train_hash_map = dict((e, zlib.adler32(ttns.train_stack_config[e].get_value()))
                           for e in train_stack_param_names)
-    print 'Epoch:', training_stats['epoch_id'], \
-        'Learning Rate', training_stats['clr']
+    print('Epoch:', training_stats['epoch_id'], \
+        'Learning Rate', training_stats['clr'])
     #---#
     yield
     #---#
@@ -356,7 +356,7 @@ def setup_training_environment(args, ttns, training_stats):
         param_copy_str = ', '.join('%s -> %s'%(str(trv), str(tev))
                                    for trv, tev
                                    in train_test_map.items())
-        print 'Copying parameters', param_copy_str
+        print('Copying parameters', param_copy_str)
     # Based on the trained parameters. Update the parameters of the
     # testing model.
     for trv, tev in train_test_map.items():
@@ -465,10 +465,10 @@ def training(args, data, ttns):
         lstm_seqlabel_callbacks.update_learning_rate(
             training_stats, args)
         if training_stats['clr'] < args.minimum_lr:
-            print "\nLearning rate became too small, breaking out of training"
+            print("\nLearning rate became too small, breaking out of training")
             break
         pass
     best_epoch_id = training_stats['best_epoch_id']
-    print 'Best Epoch', best_epoch_id,\
-        'Validation F1', training_stats['validation_result'][best_epoch_id]['f1']
+    print('Best Epoch', best_epoch_id,\
+        'Validation F1', training_stats['validation_result'][best_epoch_id]['f1'])
     return training_stats

@@ -163,7 +163,7 @@ def args_creation_part2(args, data):
         sampling_decoding=args.sampling_decoding,
         crunching=args.crunching)
     args.endpoint.dont_pickle = 1
-    print args.endpoint
+    print(args.endpoint)
     #-------------------------------------------------------#
     # Dropout, Gradient Clipping, L2 Projection for *Wemb1* #
     #-------------------------------------------------------#
@@ -257,7 +257,7 @@ def args_creation_part2(args, data):
 
 def update_args(args, kwargs):
     for k, v in kwargs.items():
-        print ("Setting args.%s ="%k), v
+        print(("Setting args.%s ="%k), v)
         setattr(args, k, v)
     return args
 
@@ -279,7 +279,7 @@ def main(*_fold_info, **kwargs):
     while os.path.exists(args.folder + '_' + str(idx)):
         idx += 1
     args.folder = args.folder + '_' + str(idx)
-    print 'Set args.folder to', args.folder
+    print('Set args.folder to', args.folder)
     if __name__ != '__main__':
         # We are probably running from the hpolibrary.
         # In non-interactive batch runs, it is also important to

@@ -3,3 +3,5 @@
 *.pdf
 *.o
 src/python/transducer/src/transducer.c
+res/
+data/wiki

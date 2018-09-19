@@ -117,7 +117,7 @@ class StackConfig(collections.MutableMapping):
         return
 
     def differentiable_parameters(self):
-        return [p for p in self.values() if hasattr(p, 'is_regularizable')]
+        return [p for p in self.values() if hasattr(p, 'is_regularizable')][1:]
 
     def regularizable_parameters(self):
         return [p for p in self.differentiable_parameters() if p.is_regularizable]
@@ -127,3 +127,5 @@ class StackConfig(collections.MutableMapping):
 
     def __repr__(self):
         return '\n'.join(self.keys())
+
+

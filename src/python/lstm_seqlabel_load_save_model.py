@@ -7,11 +7,11 @@
 |           By: Pushpendre Rastogi
 |     Update #: 38
 '''
-import cPickle as pickle
 import theano
+import pickle
 
 def save_parameters_to_file(test_stack_config, pickle_name):
-    print "Started saving parameters"
+    print("Started saving parameters")
     params_to_save = {}
     for k in test_stack_config:
         val = test_stack_config[k]
@@ -27,8 +27,8 @@ def save_parameters_to_file(test_stack_config, pickle_name):
     with open(pickle_name, 'wb') as f:
         pickle.dump(params_to_save, f, protocol=-1)
 
-    print "Saved parameters %s \n to %s"%(
-        ' '.join(params_to_save.keys()), pickle_name)
+    print("Saved parameters %s \n to %s"%(
+        ' '.join(params_to_save.keys()), pickle_name))
     return
 
 

@@ -33,11 +33,11 @@ def compile_args(args):
 
 def get_train_test_namespace(args):
     if args.perform_training:
-        print 'Compiling train_model'
+        print('Compiling train_model')
         train_model = compile_args(args)
 
     set_dropout_to_zero(args)
-    print 'Compiling test_model'
+    print('Compiling test_model')
     test_model = compile_args(args)
     # Prepare the `ttns` namespace by adding train and test prefixes.
     ttns = rasengan.Namespace('ttns')
@@ -54,16 +54,16 @@ def print_pklfn_performance(args, add_newline=True):
         return
     pkl_fn = args.pretrained_param_pklfile
     if  not os.path.exists(pkl_fn):
-        print 'The pretrained param file', pkl_fn, 'does not exist.'
+        print('The pretrained param file', pkl_fn, 'does not exist.')
         return
-    pkl = pickle.load(open(pkl_fn))
+    pkl = pickle.load(open(pkl_fn, 'rb'))
     pa_best_epoch = pkl['best_epoch_id']
     pa_training_f1 = pkl['training_result'][pa_best_epoch]['f1']
     pa_validation_f1 = pkl['validation_result'][pa_best_epoch]['f1']
     arr = ['pklfn', pkl_fn, 'Training F1', pa_training_f1,
            'Validation F1', pa_validation_f1, 'Best Epoch', pa_best_epoch,]
     for e in arr:
-        print e,
+        print(e,)
     if add_newline:
         print
     return pkl, arr
@@ -84,12 +84,12 @@ def load_params_from_pklfile_to_stack_config(pkl_fn, stack_config):
                            stack_config.differentiable_parameters()]
     # Read required parameters from pklfile.
     # Upto the last id, the parameter names would be similar.
-    parameters_available_pkl = pickle.load(open(pkl_fn))
+    parameters_available_pkl = pickle.load(open(pkl_fn, 'rb'))
     parameters_available = [k for k in parameters_available_pkl
                             if k.startswith('tparam_')]
-    print 'Loading pretrained parameters from pklfn:', pkl_fn, ' to model'
-    print 'parameters_required', parameters_required
-    print 'parameters_available', parameters_available
+    print('Loading pretrained parameters from pklfn:', pkl_fn, ' to model')
+    print('parameters_required', parameters_required)
+    print('parameters_available', parameters_available)
 
     req_to_ava_map = {}
     for p in parameters_required:
@@ -115,18 +115,18 @@ def load_params_from_pklfile_to_stack_config(pkl_fn, stack_config):
             if shape_check(required_shape, available_shape):
                 row_req = required_shape[0]
                 row_ava = available_shape[0]
-                pad_width = (row_req - row_ava)/2
+                pad_width = int((row_req - row_ava)/2)
                 pp_val = numpy.pad(
                     pp_val, ((pad_width, pad_width), (0, 0)), mode='constant')
-                print 'Padded', pretrained_param, 'with', pad_width, 'zero rows'
+                print('Padded', pretrained_param, 'with', pad_width, 'zero rows')
             if (all(a == b for (a,b) in zip(required_shape, available_shape))
                 or shape_check(required_shape, available_shape)):
                 stack_config[p].set_value(pp_val)
-                print 'Setting value of', p, 'with', pretrained_param, \
-                    'Shape:', pp_val.shape
+                print('Setting value of', p, 'with', pretrained_param, \
+                    'Shape:', pp_val.shape)
             else:
-                print 'Error:', p, 'requires shape ', required_shape, \
-                    'but', pretrained_param, 'has shape', available_shape
+                print('Error:', p, 'requires shape ', required_shape, \
+                    'but', pretrained_param, 'has shape', available_shape)
                 raise NotImplementedError
                 pass
             pass
@@ -139,13 +139,13 @@ def load_params_from_pklfile(ttns, args):
         return
     pkl_fn = args.pretrained_param_pklfile
     if  not os.path.exists(pkl_fn):
-        print 'The pretrained param file', pkl_fn, 'does not exist.'
+        print('The pretrained param file', pkl_fn, 'does not exist.')
         return
     if args.perform_training:
-        print 'Loading params from pklfile to train stack config'
+        print('Loading params from pklfile to train stack config')
         load_params_from_pklfile_to_stack_config(
             pkl_fn, ttns.train_stack_config)
-    print 'Loading params from pklfile to test stack config'
+    print('Loading params from pklfile to test stack config')
     load_params_from_pklfile_to_stack_config(pkl_fn, ttns.test_stack_config)
     return
 
@@ -222,7 +222,7 @@ def make(args, force=False, pipeline=False):
             assert args.saveto == saveto, str((args.saveto, saveto))
         else:
             args.saveto = saveto
-            print 'Set args.saveto=', args.saveto
+            print('Set args.saveto=', args.saveto)
         # Check whether we need to do any training unless forced
         # explicitly.
         pt = args.perform_training

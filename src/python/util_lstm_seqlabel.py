@@ -39,7 +39,7 @@ def is_there_a_dominating_row(mat):
 
 
 def print_domination(arc_scores):
-    print 'Dominating Row: ', is_there_a_dominating_row(arc_scores.squeeze())
+    print('Dominating Row: ', is_there_a_dominating_row(arc_scores.squeeze()))
     return
 
 
@@ -154,7 +154,7 @@ def print_progress(percentage_complete, tic, epoch_id=None, carriage_return=True
            if epoch_id is None
            else
            '[learning] epoch %i >> %2.2f%%' % (epoch_id, percentage_complete)),
-    print 'completed in %.2f (sec) <<%s' % (time.time() - tic, eol),
+    print('completed in %.2f (sec) <<%s' % (time.time() - tic, eol),)
     sys.stdout.flush()
     return
 

@@ -51,7 +51,7 @@ class Penalty(class_chip.Chip):
         if self.absolute_input_tv.ndim == 1:
             in_str = self.absolute_input_tv[1:]
         elif self.absolute_input_tv.ndim == 2:
-            in_str = self.absolute_input_tv[1:, self.prm('mid_col')]
+            in_str = self.absolute_input_tv[1:, int(self.prm('mid_col'))]
         else:
             raise NotImplementedError
         #----------------------------------------------#
