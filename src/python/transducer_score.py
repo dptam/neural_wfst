@@ -25,6 +25,9 @@ import transducer_wrapper
 from transducer.src.transducer import Transducer
 import transducer_data
 import util_lstm_seqlabel
+import datetime
+import os
+
 
 LSTM_PROPERTIES = ['out_dim', 'do_dropout', 'dropout_retention_freq',
                        'clip_gradient', 'l2_project', 'add_bias']
@@ -73,8 +76,8 @@ def args_creation_part1(args):
     args.bilstm_stagger_schedule = 'extended'
     args.bilstm_externalandcopyatmax = 0
     args.bilstm_runbilstmseparately = 0
-    args.wemb1_out_dim = 10
-    args.bilstm_forward_out_dim = 15
+    args.wemb1_out_dim = 64
+    args.bilstm_forward_out_dim = 64
     args.penalty_do_dropout = 0
     args.penalty_dropout_retention_freq = -1
     args.penalty_tensor_decomp_ta_h_prod = 0
@@ -278,7 +281,7 @@ def main(*_fold_info, **kwargs):
     idx = 0
     while os.path.exists(args.folder + '_' + str(idx)):
         idx += 1
-    args.folder = args.folder + '_' + str(idx)
+
     print('Set args.folder to', args.folder)
     if __name__ != '__main__':
         # We are probably running from the hpolibrary.

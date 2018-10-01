@@ -113,9 +113,14 @@ def load_params_from_pklfile_to_stack_config(pkl_fn, stack_config):
             shape_check = lambda s1, s2 : (
                 len(s1) == 2 and len(s2) == 2 and s1[1] == s2[1])
             if shape_check(required_shape, available_shape):
+                print("Required Shape: ", required_shape[0])
+                print("Available Shape: ", available_shape[0])
                 row_req = required_shape[0]
                 row_ava = available_shape[0]
                 pad_width = int((row_req - row_ava)/2)
+                if(pad_width < 0):
+                    pad_width = - pad_width
+                print("Pad Width: ", pad_width)
                 pp_val = numpy.pad(
                     pp_val, ((pad_width, pad_width), (0, 0)), mode='constant')
                 print('Padded', pretrained_param, 'with', pad_width, 'zero rows')
@@ -127,7 +132,7 @@ def load_params_from_pklfile_to_stack_config(pkl_fn, stack_config):
             else:
                 print('Error:', p, 'requires shape ', required_shape, \
                     'but', pretrained_param, 'has shape', available_shape)
-                raise NotImplementedError
+                # raise NotImplementedError
                 pass
             pass
         pass
@@ -155,6 +160,7 @@ def perform_training_and_testing(training_stage, args, data):
     -------
     The validation error. A quantity that we want to minimize.
     '''
+    print("Perform Training and Testing")
     stats = None
     with rasengan.tictoc(training_stage):
         with rasengan.debug_support():
@@ -163,6 +169,7 @@ def perform_training_and_testing(training_stage, args, data):
                     ttns = get_train_test_namespace(args)
                 with rasengan.tictoc("Loading Parameters"):
                     load_params_from_pklfile(ttns, args)
+
                 pass
             rasengan.decrease_print_indent()
             print_pklfn_performance(args)

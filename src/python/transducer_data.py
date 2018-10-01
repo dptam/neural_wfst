@@ -26,7 +26,7 @@ def read_data(file_name):
             line = line.strip()
             if line == '':
                 continue
-            one, two = line.split("\t")
+            (one, two, *rest) = line.split("\t")
             lst.append((one, two))
     return lst
 
@@ -59,6 +59,8 @@ def get_lst_char(data_tuple_list):
         e = str(e)
         if e not in lst_char:
             lst_char.append(e)
+    if(BOS_CHAR in lst_char):
+        lst_char.remove(BOS_CHAR)
     assert BOS_CHAR not in lst_char
     lst_char.insert(0, BOS_CHAR)
     return lst_char
@@ -82,7 +84,6 @@ def main(args):
                 lim = args.partition_dev_into_test
                 data_list.extend(val_data_list[lim:])
                 val_data_list = val_data_list[:lim]
-
             if args.partition_dev_into_test > 0:
                 lim = args.partition_dev_into_test
                 test_data_list = val_data_list[lim:]
@@ -90,7 +91,6 @@ def main(args):
             else:
                 test_data_list = rasengan.namespacer(
                     read_data(args.test_fn))
-
             # data_list = val_data_list = [(u'jason', u'eisner')]
             lst_char = get_lst_char(data_list
                                     + val_data_list
@@ -110,19 +110,14 @@ def main(args):
             # ''')
             # sigma :: char -> int
             sigma = dict((b, a+1) for (a,b) in enumerate(lst_char))
-
             # sigma_inv :: int -> char
             sigma_inv = dict((a+1, b) for (a,b) in enumerate(lst_char))
-
             if args.limit_corpus > 0:
                 data_list = data_list[:args.limit_corpus]
-
             train_data = numerize(data_list, sigma, args.win)
             val_data = numerize(val_data_list, sigma, args.win)
             test_data = numerize(test_data_list, sigma, args.win)
-
             data = rasengan.Namespace()
-
             #-------------------------------------------------------------#
             # Add sets that would be used by the tensorflow seq2seq       #
             # model. See~$PY/tensorflow/models/rnn/translate/translate.py #
@@ -138,14 +133,14 @@ def main(args):
             data.vocsize = len(sigma) + 1
             data.idx2label = sigma_inv
             data.label2idx = sigma
-
+            print("J")
             data.train_lex = [e[0] for e in train_data]
             data.train_y = [e[1] for e in train_data]
-
+            print("K")
             data.valid_lex = [e[0] for e in val_data]
             data.valid_y = util_lstm_seqlabel.convert_id_to_word(
                 [e[1] for e in val_data], data.idx2label)
-
+            print("L")
             data.test_lex = [e[0] for e in test_data]
             data.test_y = util_lstm_seqlabel.convert_id_to_word(
                 [e[1] for e in test_data], data.idx2label)

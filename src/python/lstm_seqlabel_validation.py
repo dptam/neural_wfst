@@ -81,7 +81,7 @@ def wrap_float(f):
 
 @wrap_float
 def validate_predictions_transducer(
-        test_lex, idx2label, args, f_classify, groundtruth_valid,
+        test_lex, train_y, idx2label, args, f_classify, f_cost, groundtruth_valid,
         words_valid, fn='/current.valid.txt', conv_x_to_batch=False):
     ''' Validate the predictions made by the transducer.
     '''
@@ -89,14 +89,19 @@ def validate_predictions_transducer(
     print('Writing predictions to ', (args.folder + fn))
     with codecs.open(args.folder + fn, mode="w", encoding="utf8") as f:
         f.write('input prediction goldOutput\n')
-        for (x, y) in zip(test_lex, groundtruth_valid):
-            y = ''.join(list(y))
+        for (x, y, true_y) in zip(test_lex, train_y, groundtruth_valid):
+            print("X: ", x)
+            true_y = ''.join(list(true_y))
+            print("Before Classify")
             prediction = ''.join([idx2label[e] for e in f_classify(x)])
+            print("After Classify")
+            cost = f_cost(x, y)
+            print("After Cost")
             assert x.shape[1] % 2 == 1
             mid_column = (x.shape[1] - 1) / 2
             x = ''.join([idx2label[e] for e in x[:, int(mid_column)]])
-            f.write('%s %s %s\n' % (x, prediction, y))
-            correct += (prediction == y)
+            f.write('%s\t%s\t%s\n' % (x, true_y, cost))            
+            correct += (prediction == true_y)
     return 100 * float(correct) / len(groundtruth_valid)
 
 
@@ -200,9 +205,11 @@ def testing(args, data, ttns):
                   'loaded inside the circuit already')
     test_result = args.validate_predictions_f(
         data.test_lex,
+        data.train_y,
         data.idx2label,
         args,
         ttns.test_f_classify,
+        ttns.test_f_cost,
         data.test_y,
         data.words_test,
         fn='/current.test.txt')

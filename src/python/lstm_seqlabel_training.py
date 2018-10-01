@@ -96,7 +96,10 @@ def train_transducer_lbfgs(
         corpus_cost = 0
         for idx in range(len(train_lex)):
             input_string = train_lex[idx]
+
             output_string = train_y[idx]
+
+
             corpus_cost += ttns.train_f_cost(input_string, output_string)
         return corpus_cost / len(train_lex)
 
@@ -139,6 +142,7 @@ def train_transducer(train_lex, train_y, args, ttns, training_stats, batch_size=
         for i, idx in enumerate(idx_list):
             input_string = train_lex[idx]
             output_string = train_y[idx]
+
             epoch_cost += ttns.train_f_cost(input_string, output_string)
             ttns.train_f_update(
                 training_stats['clr'], input_string, output_string)
@@ -428,9 +432,11 @@ def training(args, data, ttns):
             with rasengan.announce_ctm("Calculating Training Performance"):
                 training_result = args.validate_predictions_f(
                     rasengan.sample_from_list(data.train_lex, 1000),
+                    rasengan.sample_from_list(data.train_y, 1000),
                     data.idx2label,
                     args,
                     ttns.test_f_classify,
+                    ttns.test_f_cost,
                     util_lstm_seqlabel.convert_id_to_word(
                         rasengan.sample_from_list(data.train_y, 1000),
                         data.idx2label),
@@ -440,9 +446,11 @@ def training(args, data, ttns):
             with rasengan.announce_ctm("Calculating Validation Performance"):
                 validation_result = args.validate_predictions_f(
                     data.valid_lex,
+                    data.train_y,
                     data.idx2label,
                     args,
                     ttns.test_f_classify,
+                    ttns.test_f_cost,
                     data.valid_y,
                     data.words_valid,
                     fn='/current.valid.txt')
